@@ -93,11 +93,11 @@ PluginSettings {
                     color: Theme.surfaceVariantText
                 }
 
-                Text {
+                StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignHCenter
                     textFormat: Text.RichText
-                    font.family: Theme.fontFamily
+                    wrapMode: Text.NoWrap
                     text: root.previewHtml(true)
                 }
             }
@@ -113,10 +113,10 @@ PluginSettings {
                     color: Theme.surfaceVariantText
                 }
 
-                Text {
+                StyledText {
                     anchors.horizontalCenter: parent.horizontalCenter
                     textFormat: Text.RichText
-                    font.family: Theme.fontFamily
+                    wrapMode: Text.NoWrap
                     text: root.previewHtml(false)
                 }
             }
@@ -204,7 +204,8 @@ PluginSettings {
     }
 
     // ─── Format syntax reference ───
-    property bool syntaxOpen: loadState("syntaxOpen", true)
+    property bool syntaxOpen: true
+    Component.onCompleted: syntaxOpen = loadState("syntaxOpen", true)
 
     readonly property var syntaxGroups: [
         {
@@ -244,6 +245,21 @@ PluginSettings {
             ]
         }
     ]
+
+    // Token chips are as wide as the widest token
+    FontMetrics {
+        id: chipFont
+        font.family: Theme.monoFontFamily
+        font.pixelSize: Theme.fontSizeSmall
+    }
+
+    readonly property real chipWidth: {
+        let w = 0;
+        for (const g of syntaxGroups)
+            for (const r of g.rows)
+                w = Math.max(w, chipFont.advanceWidth(r.tok));
+        return Math.ceil(w + Theme.spacingS * 2);
+    }
 
     function exampleHtml(fmt) {
         rev;
@@ -336,7 +352,9 @@ PluginSettings {
                 width: parent.width
                 spacing: Theme.spacingL
 
-                readonly property int perRow: width >= 3 * 200 + 2 * spacing ? 3 : (width >= 2 * 200 + spacing ? 2 : 1)
+                // A group needs room for a chip, a short description and an example
+                readonly property real minGroupWidth: root.chipWidth + Theme.fontSizeSmall * 12
+                readonly property int perRow: width >= 3 * minGroupWidth + 2 * spacing ? 3 : (width >= 2 * minGroupWidth + spacing ? 2 : 1)
                 readonly property real groupWidth: Math.floor((width - (perRow - 1) * spacing) / perRow)
 
                 Repeater {
@@ -379,7 +397,7 @@ PluginSettings {
 
                                 Rectangle {
                                     id: chip
-                                    width: 64
+                                    width: root.chipWidth
                                     height: chipText.implicitHeight + Theme.spacingXXS * 2
                                     radius: Theme.spacingXS
                                     color: Theme.chipSurface
@@ -407,12 +425,12 @@ PluginSettings {
                                     color: Theme.surfaceText
                                 }
 
-                                Text {
+                                StyledText {
                                     id: example
                                     anchors.right: parent.right
                                     anchors.verticalCenter: parent.verticalCenter
                                     textFormat: Text.RichText
-                                    font.family: Theme.fontFamily
+                                    wrapMode: Text.NoWrap
                                     text: root.exampleHtml(tokRow.modelData.ex)
                                 }
                             }

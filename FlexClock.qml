@@ -225,7 +225,25 @@ PluginComponent {
     }
 
     // ─── Date card (popout) ───
-    popoutWidth: 320
+    function cardDetails(date) {
+        return date.toLocaleDateString(locale, "d MMMM yyyy") + "  ·  Week " + Fmt.isoWeek(date) + "  ·  Day " + Fmt.dayOfYear(date);
+    }
+
+    FontMetrics {
+        id: cardFont
+        font.family: Theme.fontFamily
+        font.pixelSize: Theme.fontSizeMedium
+    }
+
+    // Wide enough for the details line in the longest month, so it never wraps
+    popoutWidth: {
+        const year = new Date().getFullYear();
+        let w = 0;
+        for (let m = 0; m < 12; m++)
+            w = Math.max(w, cardFont.advanceWidth(cardDetails(new Date(year, m, 28))));
+        // details line has a left padding, the popout pads its content on both sides
+        return Math.ceil(w + Theme.spacingS * 2 + PopoutMetrics.contentPadding * 2);
+    }
 
     popoutContent: Component {
         PopoutComponent {
@@ -247,7 +265,7 @@ PluginComponent {
             }
 
             headerText: today.toLocaleDateString(root.locale, "dddd")
-            detailsText: today.toLocaleDateString(root.locale, "d MMMM yyyy") + "  ·  Week " + Fmt.isoWeek(today) + "  ·  Day " + Fmt.dayOfYear(today)
+            detailsText: root.cardDetails(today)
             spacing: Theme.spacingS
 
             // Month header with navigation
