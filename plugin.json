@@ -1,0 +1,18 @@
+{
+    "id": "flexClock",
+    "name": "Flex Clock",
+    "description": "Bar clock with Qt-style custom time/date formats, multi-line layouts for vertical bars, and a smaller AM/PM",
+    "version": "1.0.0",
+    "license": "MIT",
+    "author": "jibon-k",
+    "icon": "schedule",
+    "type": "widget",
+    "capabilities": ["dankbar-widget"],
+    "component": "./FlexClock.qml",
+    "settings": "./FlexClockSettings.qml",
+    "requires_dms": ">=2.0.0",
+    "permissions": [
+        "settings_read",
+        "settings_write"
+    ]
+}
