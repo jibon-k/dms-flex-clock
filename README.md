@@ -13,6 +13,9 @@ The built-in clock ignores the custom date format on vertical bars and always st
 - Smaller AM/PM, with an adjustable size
 - `*bold*`, `~dim~` and `!accent!` styling for parts of a format
 - Date card on right-click: full date, week number, day of year and a month calendar
+
+![Date card](./assets/date-card.png)
+
 - Leave a format empty to follow DMS's Time & Date settings (12/24h, seconds, AM/PM)
 
 ## Format
